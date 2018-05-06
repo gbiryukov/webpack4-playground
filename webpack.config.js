@@ -38,6 +38,23 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          chunks: 'all',
+          name: 'vendors',
+          test: /node_modules/,
+          priority: -10,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        }
+      },
+    },
+  },
   plugins: [
     new HtmlWebpackPlugin(),
     new AsyncChunkNamesPlugin(),
