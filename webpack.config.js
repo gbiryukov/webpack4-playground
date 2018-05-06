@@ -6,6 +6,7 @@ const AsyncChunkNamesPlugin = require('webpack-async-chunk-names-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const SuppressChunksPlugin = require('suppress-chunks-webpack-plugin').default;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { isProd, ifProd } = require('./webpack/envHelpers');
 
 const ROOT_DIR = __dirname;
@@ -86,5 +87,6 @@ module.exports = {
       chunkFilename: `css/[name].${isProd ? '[contenthash:8]' : '[id]'}.css`,
     }),
     ifProd(new webpack.HashedModuleIdsPlugin()),
+    ifProd(new BundleAnalyzerPlugin()),
   ]),
 };
