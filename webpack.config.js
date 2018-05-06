@@ -1,6 +1,10 @@
 const path = require('path');
+const _ = require('lodash');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AsyncChunkNamesPlugin = require('webpack-async-chunk-names-plugin');
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const SuppressChunksPlugin = require('suppress-chunks-webpack-plugin').default;
 
 const ROOT_DIR = __dirname;
 const SRC_DIR = path.join(ROOT_DIR, 'src');
@@ -39,6 +43,9 @@ module.exports = {
     ],
   },
   optimization: {
+    runtimeChunk: {
+      name: 'runtime',
+    },
     splitChunks: {
       cacheGroups: {
         vendors: {
@@ -51,12 +58,19 @@ module.exports = {
           minChunks: 2,
           priority: -20,
           reuseExistingChunk: true,
-        }
+        },
       },
     },
   },
-  plugins: [
-    new HtmlWebpackPlugin(),
+  plugins: _.compact([
+    new HtmlWebpackPlugin({
+      inlineSource: 'runtime',
+    }),
     new AsyncChunkNamesPlugin(),
-  ],
+    new HtmlWebpackInlineSourcePlugin(),
+    new SuppressChunksPlugin([
+      'runtime',
+    ]),
+    isProd ? new webpack.HashedModuleIdsPlugin() : null,
+  ]),
 };
