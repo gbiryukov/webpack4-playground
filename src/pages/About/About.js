@@ -1,5 +1,6 @@
 import { startCase } from 'lodash';
 import { getPageUrl } from '../../shared/utils';
+import styles from './About.css';
 
 /**
  * @param {string} routeName
@@ -7,7 +8,7 @@ import { getPageUrl } from '../../shared/utils';
  */
 export default function renderAboutPage({ routeName }) {
   return `
-    <p>
+    <p class="${styles.green}">
       This is <strong>${startCase(routeName)}</strong> page.
     </p>
     <a href="${getPageUrl()}">Return to home</a>

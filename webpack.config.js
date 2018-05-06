@@ -6,11 +6,11 @@ const AsyncChunkNamesPlugin = require('webpack-async-chunk-names-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const SuppressChunksPlugin = require('suppress-chunks-webpack-plugin').default;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { isProd, ifProd } = require('./webpack/envHelpers');
 
 const ROOT_DIR = __dirname;
 const SRC_DIR = path.join(ROOT_DIR, 'src');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
-const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
@@ -60,22 +60,31 @@ module.exports = {
           priority: -20,
           reuseExistingChunk: true,
         },
+        ...ifProd({
+          styles: {
+            name: 'styles',
+            test: /\.css$/,
+            chunks: 'all',
+            enforce: true,
+          }
+        })
       },
     },
   },
   plugins: _.compact([
     new HtmlWebpackPlugin({
-      inlineSource: 'runtime',
+      inlineSource: ifProd('(runtime|styles.*.js)'),
     }),
     new AsyncChunkNamesPlugin(),
     new HtmlWebpackInlineSourcePlugin(),
-    new SuppressChunksPlugin([
+    ifProd(new SuppressChunksPlugin([
       'runtime',
-    ]),
+      { name: 'styles', match: /\.js$/ },
+    ])),
     new MiniCssExtractPlugin({
       filename: `css/[name].${isProd ? '[contenthash:8]' : '[id]'}.css`,
       chunkFilename: `css/[name].${isProd ? '[contenthash:8]' : '[id]'}.css`,
     }),
-    isProd ? new webpack.HashedModuleIdsPlugin() : null,
+    ifProd(new webpack.HashedModuleIdsPlugin()),
   ]),
 };
