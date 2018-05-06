@@ -1,0 +1,26 @@
+# Project specific
+/dist/
+/node_modules/
+
+# Logs
+*.log
+
+# Webstorm/PHPStorm
+/.idea
+
+# OSX
+.DS_Store
+
+# Vim
+*~
+
+# Sublime
+*.sublime*
+
+*.tar
+/coverage/
+
+.vscode
+
+.tmp/
+/docker-compose.yml
