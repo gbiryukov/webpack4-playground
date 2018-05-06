@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AsyncChunkNamesPlugin = require('webpack-async-chunk-names-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const SuppressChunksPlugin = require('suppress-chunks-webpack-plugin').default;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const ROOT_DIR = __dirname;
 const SRC_DIR = path.join(ROOT_DIR, 'src');
@@ -30,7 +31,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          { loader: 'style-loader' },
+          { loader: isProd ? MiniCssExtractPlugin.loader : 'style-loader' },
           {
             loader: 'css-loader',
             options: {
@@ -71,6 +72,10 @@ module.exports = {
     new SuppressChunksPlugin([
       'runtime',
     ]),
+    new MiniCssExtractPlugin({
+      filename: `css/[name].${isProd ? '[contenthash:8]' : '[id]'}.css`,
+      chunkFilename: `css/[name].${isProd ? '[contenthash:8]' : '[id]'}.css`,
+    }),
     isProd ? new webpack.HashedModuleIdsPlugin() : null,
   ]),
 };
